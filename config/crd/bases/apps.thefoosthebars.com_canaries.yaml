@@ -1,0 +1,71 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.12.0
+  name: canaries.apps.thefoosthebars.com
+spec:
+  group: apps.thefoosthebars.com
+  names:
+    kind: Canary
+    listKind: CanaryList
+    plural: canaries
+    singular: canary
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: Canary is the Schema for the canaries API This top-level type
+          represents a Canary resource in K8s
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: CanarySpec defines the desired state of Canary It specifies
+              what we want
+            properties:
+              deploymentName:
+                type: string
+              image:
+                type: string
+              percentage:
+                type: integer
+              replicas:
+                format: int32
+                type: integer
+            required:
+            - deploymentName
+            - image
+            - percentage
+            - replicas
+            type: object
+          status:
+            description: CanaryStatus defines the observed state of Canary It reflects
+              the current state of the canary deployment as observed by the operator
+            properties:
+              nodes:
+                items:
+                  type: string
+                type: array
+              phase:
+                type: string
+            required:
+            - phase
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}

@@ -1,0 +1,12 @@
+
+apiVersion: apps.thefoosthebars.com/v1alpha1
+kind: Canary
+metadata:
+  name: example-app-canary
+  namespace: canary-k8s-operator-system
+spec:
+  deploymentName: example-app
+  image: nginx:1.21.4
+  replicas: 1
+
+  percentage: 20

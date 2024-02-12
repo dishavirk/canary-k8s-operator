@@ -1,0 +1,27 @@
+# permissions for end users to view canaries.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: clusterrole
+    app.kubernetes.io/instance: canary-viewer-role
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: canary-k8s-operator
+    app.kubernetes.io/part-of: canary-k8s-operator
+    app.kubernetes.io/managed-by: kustomize
+  name: canary-viewer-role
+rules:
+- apiGroups:
+  - apps.thefoosthebars.com
+  resources:
+  - canaries
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - apps.thefoosthebars.com
+  resources:
+  - canaries/status
+  verbs:
+  - get
