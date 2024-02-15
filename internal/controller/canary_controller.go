@@ -3,6 +3,7 @@ package controller
 import (
 	"context"
 	"fmt"
+	"math"
 	"reflect"
 
 	canaryv1alpha1 "github.com/dishavirk/canary-k8s-operator/api/v1alpha1"
@@ -28,6 +29,7 @@ type CanaryReconciler struct {
 //+kubebuilder:rbac:groups=apps.thefoosthebars.com,resources=canaries/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=apps.thefoosthebars.com,resources=canaries/finalizers,verbs=update
 //+kubebuilder:rbac:groups=apps,resources=deployments,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups="",resources=pods,verbs=get;list;watch
 
 func (r *CanaryReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	_ = log.FromContext(ctx)
@@ -38,14 +40,25 @@ func (r *CanaryReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
 
-	// Define a new Deployment object
+	// Fetch the original Deployment
+	var originalDeployment appsv1.Deployment
+	if err := r.Get(ctx, types.NamespacedName{Name: canary.Spec.DeploymentName, Namespace: req.Namespace}, &originalDeployment); err != nil {
+		log.Log.Error(err, "unable to fetch original Deployment", "Deployment.Namespace", req.Namespace, "Deployment.Name", canary.Spec.DeploymentName)
+		return ctrl.Result{}, err
+	}
+
+	// Calculate the number of replicas for the canary deployment based on the percentage
+	totalReplicas := *originalDeployment.Spec.Replicas
+	canaryReplicas := int32(math.Ceil(float64(totalReplicas) * float64(canary.Spec.Percentage) / 100))
+
+	// Define the canary Deployment object
 	canaryDeployment := &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      fmt.Sprintf("%s-canary", canary.Spec.DeploymentName),
 			Namespace: req.Namespace,
 		},
 		Spec: appsv1.DeploymentSpec{
-			Replicas: &canary.Spec.Replicas, // Define how many replicas for the canary
+			Replicas: &canaryReplicas, // We use calculated canary replicas
 			Selector: &metav1.LabelSelector{
 				MatchLabels: map[string]string{"app": canary.Spec.DeploymentName, "canary": "true"},
 			},
@@ -97,8 +110,6 @@ func (r *CanaryReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	}
 	podNames := getPodNames(podList.Items)
 
-	log.Log.Info("Canary deployment pods", "Pod Names", podNames)
-
 	// Update status.Nodes if needed
 	if !reflect.DeepEqual(podNames, canary.Status.Nodes) {
 		canary.Status.Nodes = podNames
@@ -119,8 +130,7 @@ func (r *CanaryReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		Complete(r)
 }
 
-// labelsForCanary returns the labels for selecting the resources
-// belonging to the given canary CR name.
+// labelsForCanary returns the labels for resources dbelonging to the given canary CR name.
 func labelsForCanary(name string) map[string]string {
 	return map[string]string{"type": "canary", "cr_name": name}
 }
