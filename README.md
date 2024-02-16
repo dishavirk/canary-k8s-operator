@@ -1,94 +1,14 @@
-# canary-k8s-operator
-// TODO(user): Add simple overview of use/purpose
+# Canary K8s Operator
+The Canary K8s Operator manages the deployment of Canary releases in our K8s cluster by leveraging Custom Resource Definitions (CRDs) and a Custom Controllers.
+</br>
+Recognizing a glaring gap between the abundance of theoretical articles on K8s Deployment Strategies 📚 and their practical application, I was inspired to make my own small contribution toward bridging this divide. This led me to spend a somewhat challenging weekend immersed in new concepts and topics, facing unexpected errors, and engaging in some endless debugging sessions.
+I'm sharing my insights and lessons in the first part of my series, focusing on writing custom K8s operators using the Operator SDK.
 
 ## Description
-// TODO(user): An in-depth paragraph about your project and overview of use
+Whether you're new to K8s or looking to expand your knowledge on Operator pattern and Canary deployments, please find the corresponding series on Medium for more context and deeper understanding that enhances the practical application of the concepts discussed.
 
-## Getting Started
-You’ll need a Kubernetes cluster to run against. You can use [KIND](https://sigs.k8s.io/kind) to get a local cluster for testing, or run against a remote cluster.
-**Note:** Your controller will automatically use the current context in your kubeconfig file (i.e. whatever cluster `kubectl cluster-info` shows).
+[Part 1: Introduction to Operators and the Operator Pattern](https://medium.com/@disha.20.10/understanding-canary-deployments-in-kubernetes-part-1-introduction-to-operators-and-the-operator-0a0483d499a2)
+Dive into the basics of K8s operators, understanding their purpose, and how they simplify complex operations tasks within a Kubernetes environment.
 
-### Running on the cluster
-1. Install Instances of Custom Resources:
-
-```sh
-kubectl apply -f config/samples/
-```
-
-2. Build and push your image to the location specified by `IMG`:
-
-```sh
-make docker-build docker-push IMG=<some-registry>/canary-k8s-operator:tag
-```
-
-3. Deploy the controller to the cluster with the image specified by `IMG`:
-
-```sh
-make deploy IMG=<some-registry>/canary-k8s-operator:tag
-```
-
-### Uninstall CRDs
-To delete the CRDs from the cluster:
-
-```sh
-make uninstall
-```
-
-### Undeploy controller
-UnDeploy the controller from the cluster:
-
-```sh
-make undeploy
-```
-
-## Contributing
-// TODO(user): Add detailed information on how you would like others to contribute to this project
-
-### How it works
-This project aims to follow the Kubernetes [Operator pattern](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/).
-
-It uses [Controllers](https://kubernetes.io/docs/concepts/architecture/controller/),
-which provide a reconcile function responsible for synchronizing resources until the desired state is reached on the cluster.
-
-### Test It Out
-1. Install the CRDs into the cluster:
-
-```sh
-make install
-```
-
-2. Run your controller (this will run in the foreground, so switch to a new terminal if you want to leave it running):
-
-```sh
-make run
-```
-
-**NOTE:** You can also run this in one step by running: `make install run`
-
-### Modifying the API definitions
-If you are editing the API definitions, generate the manifests such as CRs or CRDs using:
-
-```sh
-make manifests
-```
-
-**NOTE:** Run `make --help` for more information on all potential `make` targets
-
-More information can be found via the [Kubebuilder Documentation](https://book.kubebuilder.io/introduction.html)
-
-## License
-
-Copyright 2024.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
+[Part 2: Implementing CRDs, Controllers, and Testing](https://medium.com/@disha.20.10/understanding-canary-deployments-in-kubernetes-part-2-implementing-crds-controllers-and-testing-3c3672edd99c)
+Explore the practical aspects of developing a K8s operator, focusing on CRDs, writing controllers, and testing your operator.
